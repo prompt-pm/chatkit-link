@@ -134,6 +134,7 @@ function ChatKitComponent({ clientSecret }) {
         }
         return clientSecret;
       },
+      domainKey: 'domain_pk_68e4523685bc8190a7f7090b1402ae1905240edd6cc7eb4c',
     },
     theme: {
       colorScheme: 'light',
