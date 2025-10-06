@@ -27,7 +27,8 @@ function App() {
     if (workflowId) localStorage.setItem('chatkit_workflow_id', workflowId);
 
     try {
-      const response = await fetch('/api/create-session', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://chatkit-link-backend.onrender.com';
+      const response = await fetch(`${apiUrl}/api/create-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
