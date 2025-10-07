@@ -199,12 +199,15 @@ function App() {
             </button>
           </>
         ) : (
-          <button
-            className="expand-btn"
-            onClick={() => setSidebarCollapsed(false)}
-          >
-            →
-          </button>
+          <>
+            <div className="sidebar-logo">C</div>
+            <button
+              className="expand-btn"
+              onClick={() => setSidebarCollapsed(false)}
+            >
+              →
+            </button>
+          </>
         )}
       </div>
 
@@ -243,7 +246,6 @@ function ChatKitComponent({ clientSecret }) {
         }
         return clientSecret;
       },
-      domainKey: 'domain_pk_68e4523685bc8190a7f7090b1402ae1905240edd6cc7eb4c',
     },
     theme: {
       colorScheme: 'light',

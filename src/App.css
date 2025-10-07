@@ -25,8 +25,8 @@ body {
 
 .sidebar.collapsed {
   width: 50px;
-  justify-content: flex-end;
-  padding-bottom: 0.75rem;
+  justify-content: space-between;
+  padding: 0.75rem 0;
 }
 
 .sidebar-header {
@@ -254,6 +254,20 @@ body {
 
 .collapse-btn:hover {
   background: #f0f0f0;
+}
+
+.sidebar-logo {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  background: #e0e0e0;
+  color: #666;
+  border-radius: 6px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .expand-btn {
