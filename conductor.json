@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "setup": "./conductor-setup.sh",
+        "run": "npm run dev & python3 main.py",
+        "lint": "npm run lint && black --check ."
+    }
+}
