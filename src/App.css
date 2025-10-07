@@ -3,99 +3,293 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: #f5f5f5;
+  overflow: hidden;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
 }
 
-header {
-  text-align: center;
-  margin-bottom: 2rem;
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  position: relative;
 }
 
-h1 {
-  font-size: 2.5rem;
+.sidebar.collapsed {
+  width: 50px;
+}
+
+.sidebar-header {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.sidebar-header h2 {
+  font-size: 1.25rem;
   font-weight: 700;
+  color: #333;
+}
+
+.api-key-section {
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.api-key-section label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #666;
   margin-bottom: 0.5rem;
 }
 
-.subtitle {
-  color: #666;
-  font-size: 1.1rem;
+.api-key-section input {
+  width: 100%;
+  padding: 0.625rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.875rem;
 }
 
-.input-section {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
-}
-
-.input-group {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.input-group:last-child {
-  margin-bottom: 0;
-}
-
-input {
-  flex: 1;
-  padding: 0.875rem 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-input:focus {
+.api-key-section input:focus {
   outline: none;
   border-color: #10a37f;
 }
 
-label {
-  font-weight: 600;
-  color: #333;
-  min-width: 120px;
+.workflows-section {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
-button {
+.add-workflow-btn {
+  width: 100%;
+  padding: 0.75rem;
   background: #10a37f;
   color: white;
-  padding: 0.875rem 2rem;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
   font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 1rem;
+}
+
+.add-workflow-btn:hover {
+  background: #0d8c6a;
+}
+
+.add-workflow-form {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.add-workflow-form input {
+  width: 100%;
+  padding: 0.625rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.add-workflow-form input:focus {
+  outline: none;
+  border-color: #10a37f;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-actions button:last-child {
+  background: #999;
+}
+
+.form-actions button:last-child:hover {
+  background: #777;
+}
+
+.workflows-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.workflows-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.workflow-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.workflow-item:hover {
+  background: #f9f9f9;
+  border-color: #10a37f;
+}
+
+.workflow-item.active {
+  background: #e8f5f0;
+  border-color: #10a37f;
+}
+
+.workflow-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.checkmark {
+  color: #10a37f;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.workflow-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.workflow-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workflow-id {
+  font-size: 0.75rem;
+  color: #999;
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.delete-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: #fee;
+  color: #c33;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.delete-btn:hover {
+  background: #fdd;
+}
+
+.collapse-btn {
+  padding: 0.75rem;
+  background: #f9f9f9;
+  color: #666;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-button:hover {
+.collapse-btn:hover {
+  background: #f0f0f0;
+}
+
+.sidebar-collapsed-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+  gap: 1rem;
+}
+
+.expand-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: #10a37f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.expand-btn:hover {
   background: #0d8c6a;
 }
 
-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+.workflow-count {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #666;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .chat-container {
+  flex: 1;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  padding: 2rem;
-  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   color: #999;
   padding: 4rem 2rem;
@@ -104,9 +298,10 @@ button:disabled {
 .error {
   background: #fee;
   color: #c33;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
+  margin: 1rem;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  border: 1px solid #fcc;
 }
 
 .loading {
@@ -121,22 +316,4 @@ button:disabled {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
-}
-
-.success-message {
-  background: #e8f5e9;
-  border: 2px solid #4caf50;
-  padding: 2rem;
-  border-radius: 12px;
-  color: #2e7d32;
-}
-
-.success-message h3 {
-  margin-bottom: 1rem;
-  color: #1b5e20;
-}
-
-.success-message p {
-  margin-bottom: 0.5rem;
-  line-height: 1.6;
 }

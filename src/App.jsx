@@ -4,27 +4,45 @@ import './App.css';
 
 function App() {
   const [apiKey, setApiKey] = useState(localStorage.getItem('chatkit_api_key') || '');
-  const [workflowId, setWorkflowId] = useState(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('workflow') || localStorage.getItem('chatkit_workflow_id') || '';
+  const [workflows, setWorkflows] = useState(() => {
+    const saved = localStorage.getItem('chatkit_workflows');
+    return saved ? JSON.parse(saved) : [];
   });
+  const [activeWorkflowId, setActiveWorkflowId] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('workflow') || localStorage.getItem('chatkit_active_workflow') || '';
+  });
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem('chatkit_sidebar_collapsed');
+    return saved === 'true';
+  });
+  const [newWorkflowId, setNewWorkflowId] = useState('');
+  const [newWorkflowLabel, setNewWorkflowLabel] = useState('');
+  const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [clientSecret, setClientSecret] = useState(null);
 
   useEffect(() => {
-    if (workflowId && apiKey && !clientSecret) {
-      handleLoadChat();
+    if (activeWorkflowId && apiKey && !clientSecret) {
+      loadWorkflow(activeWorkflowId);
     }
   }, []);
 
-  const handleLoadChat = async () => {
+  useEffect(() => {
+    localStorage.setItem('chatkit_workflows', JSON.stringify(workflows));
+  }, [workflows]);
+
+  useEffect(() => {
+    localStorage.setItem('chatkit_sidebar_collapsed', sidebarCollapsed);
+  }, [sidebarCollapsed]);
+
+  const loadWorkflow = async (workflowId) => {
+    if (!apiKey || !workflowId) return;
+
     setLoading(true);
     setError('');
-
-    // Save to localStorage
-    if (apiKey) localStorage.setItem('chatkit_api_key', apiKey);
-    if (workflowId) localStorage.setItem('chatkit_workflow_id', workflowId);
+    setClientSecret(null);
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'https://chatkit-link-backend.onrender.com';
@@ -43,12 +61,10 @@ function App() {
       }
 
       const data = await response.json();
-      console.log('Session response data:', data);
-      console.log('client_secret:', data.client_secret);
-
       setClientSecret(data.client_secret);
+      setActiveWorkflowId(workflowId);
+      localStorage.setItem('chatkit_active_workflow', workflowId);
 
-      // Update URL
       const url = new URL(window.location);
       url.searchParams.set('workflow', workflowId);
       window.history.pushState({}, '', url);
@@ -61,59 +77,155 @@ function App() {
     }
   };
 
+  const handleAddWorkflow = () => {
+    if (!newWorkflowId.trim()) return;
+
+    const workflow = {
+      id: newWorkflowId.trim(),
+      label: newWorkflowLabel.trim() || newWorkflowId.trim().substring(0, 20)
+    };
+
+    setWorkflows([...workflows, workflow]);
+    setNewWorkflowId('');
+    setNewWorkflowLabel('');
+    setShowAddForm(false);
+    loadWorkflow(workflow.id);
+  };
+
+  const handleDeleteWorkflow = (workflowId) => {
+    setWorkflows(workflows.filter(w => w.id !== workflowId));
+    if (activeWorkflowId === workflowId) {
+      setClientSecret(null);
+      setActiveWorkflowId('');
+      localStorage.removeItem('chatkit_active_workflow');
+    }
+  };
+
+  const handleSwitchWorkflow = (workflowId) => {
+    if (workflowId !== activeWorkflowId) {
+      loadWorkflow(workflowId);
+    }
+  };
+
   return (
-    <div className="container">
-      <header>
-        <h1>ChatKit Link</h1>
-        <p className="subtitle">Demo your ChatKit workflows instantly</p>
-      </header>
+    <div className="app-layout">
+      <div className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+        {!sidebarCollapsed ? (
+          <>
+            <div className="sidebar-header">
+              <h2>ChatKit Link</h2>
+            </div>
 
-      <div className="input-section">
-        <div className="input-group">
-          <label htmlFor="api-key">API Key:</label>
-          <input
-            id="api-key"
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleLoadChat()}
-            placeholder="sk-..."
-            disabled={loading}
-          />
-        </div>
-        <div className="input-group">
-          <label htmlFor="workflow-id">Workflow ID:</label>
-          <input
-            id="workflow-id"
-            type="text"
-            value={workflowId}
-            onChange={(e) => setWorkflowId(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleLoadChat()}
-            placeholder="wf_abc123..."
-            disabled={loading}
-          />
-          <button
-            onClick={handleLoadChat}
-            disabled={loading || !workflowId || !apiKey}
-          >
-            {loading ? <span className="loading"></span> : 'Load Chat'}
-          </button>
-        </div>
-      </div>
+            <div className="api-key-section">
+              <label htmlFor="api-key">API Key</label>
+              <input
+                id="api-key"
+                type="password"
+                value={apiKey}
+                onChange={(e) => {
+                  setApiKey(e.target.value);
+                  localStorage.setItem('chatkit_api_key', e.target.value);
+                }}
+                placeholder="sk-proj-..."
+                disabled={loading}
+              />
+            </div>
 
-      {error && <div className="error">{error}</div>}
+            <div className="workflows-section">
+              <button
+                className="add-workflow-btn"
+                onClick={() => setShowAddForm(!showAddForm)}
+              >
+                + Add Workflow
+              </button>
 
-      <div className="chat-container">
-        {clientSecret ? (
-          <ChatKitComponent clientSecret={clientSecret} />
+              {showAddForm && (
+                <div className="add-workflow-form">
+                  <input
+                    type="text"
+                    placeholder="Workflow label (optional)"
+                    value={newWorkflowLabel}
+                    onChange={(e) => setNewWorkflowLabel(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="wf_abc123..."
+                    value={newWorkflowId}
+                    onChange={(e) => setNewWorkflowId(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleAddWorkflow()}
+                  />
+                  <div className="form-actions">
+                    <button onClick={handleAddWorkflow}>Add</button>
+                    <button onClick={() => setShowAddForm(false)}>Cancel</button>
+                  </div>
+                </div>
+              )}
+
+              <div className="workflows-label">Workflows:</div>
+
+              <div className="workflows-list">
+                {workflows.map((workflow) => (
+                  <div
+                    key={workflow.id}
+                    className={`workflow-item ${activeWorkflowId === workflow.id ? 'active' : ''}`}
+                    onClick={() => handleSwitchWorkflow(workflow.id)}
+                  >
+                    <div className="workflow-info">
+                      {activeWorkflowId === workflow.id && <span className="checkmark">✓</span>}
+                      <div className="workflow-details">
+                        <div className="workflow-label">{workflow.label}</div>
+                        <div className="workflow-id">{workflow.id.substring(0, 15)}...</div>
+                      </div>
+                    </div>
+                    <button
+                      className="delete-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteWorkflow(workflow.id);
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button
+              className="collapse-btn"
+              onClick={() => setSidebarCollapsed(true)}
+            >
+              ← Collapse
+            </button>
+          </>
         ) : (
-          <div className="placeholder">
-            <svg width="64" height="64" fill="#ddd" viewBox="0 0 24 24" style={{ marginBottom: '1rem' }}>
-              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
-            </svg>
-            <p>Enter a workflow ID to start</p>
+          <div className="sidebar-collapsed-content">
+            <button
+              className="expand-btn"
+              onClick={() => setSidebarCollapsed(false)}
+            >
+              →
+            </button>
+            <div className="workflow-count">{workflows.length}</div>
           </div>
         )}
+      </div>
+
+      <div className="main-content">
+        {error && <div className="error">{error}</div>}
+
+        <div className="chat-container">
+          {clientSecret ? (
+            <ChatKitComponent clientSecret={clientSecret} />
+          ) : (
+            <div className="placeholder">
+              <svg width="64" height="64" fill="#ddd" viewBox="0 0 24 24" style={{ marginBottom: '1rem' }}>
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+              </svg>
+              <p>Add a workflow and enter your API key to start</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
