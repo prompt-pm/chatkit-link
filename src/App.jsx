@@ -278,13 +278,29 @@ function ChatKitComponent({ clientSecret }) {
       greeting: 'How can I help you today?',
       prompts: [
         {
+          icon: 'circle-question',
           label: 'What can you do?',
           prompt: 'What can you do?',
+        },
+        {
+          icon: 'lightbulb',
+          label: 'Show me an example',
+          prompt: 'Can you show me an example of what you can help with?',
+        },
+        {
+          icon: 'book-open',
+          label: 'Tell me about your capabilities',
+          prompt: 'What are your capabilities and how can I use them?',
         }
       ]
     },
     composer: {
       placeholder: 'Ask anything...',
+      attachments: {
+        enabled: true,
+        maxCount: 5,
+        maxSize: 10485760
+      }
     },
     onError: (error) => {
       console.error('ChatKit error:', error);
