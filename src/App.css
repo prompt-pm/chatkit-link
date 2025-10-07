@@ -114,20 +114,36 @@ body {
 .form-actions {
   display: flex;
   gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .form-actions button {
   flex: 1;
-  padding: 0.5rem;
+  padding: 0.625rem;
   font-size: 0.875rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.form-actions button:first-child {
+  background: #10a37f;
+  color: white;
+}
+
+.form-actions button:first-child:hover {
+  background: #0d8c6a;
 }
 
 .form-actions button:last-child {
-  background: #999;
+  background: #666;
+  color: white;
 }
 
 .form-actions button:last-child:hover {
-  background: #777;
+  background: #555;
 }
 
 .workflows-label {
