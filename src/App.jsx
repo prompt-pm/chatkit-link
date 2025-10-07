@@ -206,7 +206,6 @@ function App() {
             >
               →
             </button>
-            <div className="workflow-count">{workflows.length}</div>
           </div>
         )}
       </div>
