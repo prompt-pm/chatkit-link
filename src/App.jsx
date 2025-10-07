@@ -199,12 +199,15 @@ function App() {
             </button>
           </>
         ) : (
-          <button
-            className="expand-btn"
-            onClick={() => setSidebarCollapsed(false)}
-          >
-            →
-          </button>
+          <>
+            <div className="sidebar-logo">C</div>
+            <button
+              className="expand-btn"
+              onClick={() => setSidebarCollapsed(false)}
+            >
+              →
+            </button>
+          </>
         )}
       </div>
 
