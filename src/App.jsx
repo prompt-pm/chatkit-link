@@ -161,7 +161,9 @@ function App() {
                 </div>
               )}
 
-              <div className="workflows-label">Workflows:</div>
+              {workflows.length > 0 && (
+                <div className="workflows-label">Workflows:</div>
+              )}
 
               <div className="workflows-list">
                 {workflows.map((workflow) => (
@@ -222,15 +224,29 @@ function App() {
               <svg width="64" height="64" fill="#ddd" viewBox="0 0 24 24" style={{ marginBottom: '1rem' }}>
                 <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
               </svg>
-              <p>Add a workflow and API key to start</p>
-              <a
-                href="https://platform.openai.com/docs/guides/chatkit"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="docs-link"
-              >
-                Learn about ChatKit →
-              </a>
+              <p className="value-prop">
+                Chat with the agents you've built<br />
+                in OpenAI Agent Builder
+              </p>
+              <p>Add your workflow and API key to get started</p>
+              <div className="docs-links">
+                <a
+                  href="https://platform.openai.com/docs/guides/agent-builder"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="docs-link"
+                >
+                  Learn about Agent Builder →
+                </a>
+                <a
+                  href="https://platform.openai.com/docs/guides/chatkit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="docs-link"
+                >
+                  Learn about ChatKit →
+                </a>
+              </div>
             </div>
           )}
         </div>
